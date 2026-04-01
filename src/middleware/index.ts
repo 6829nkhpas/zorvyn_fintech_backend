@@ -1,1 +1,5 @@
-// Middleware barrel — will export authenticate, authorize, validate, errorHandler in Phase 2
+// ─────────────────────────────────────────────────────────
+// Middleware Barrel Export
+// ─────────────────────────────────────────────────────────
+
+export { authenticate, authorize } from "./auth.middleware.js";
