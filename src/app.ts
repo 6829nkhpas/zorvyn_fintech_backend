@@ -7,6 +7,7 @@ import cors from "cors";
 import helmet from "helmet";
 import { authRouter } from "./modules/auth/auth.routes.js";
 import { recordRouter } from "./modules/records/record.routes.js";
+import { dashboardRouter } from "./modules/dashboard/dashboard.routes.js";
 import { sendError } from "./utils/response.js";
 
 const app = express();
@@ -21,10 +22,10 @@ app.use(express.json({ limit: "1mb" })); // JSON body parser
 
 app.use("/api/auth", authRouter);
 app.use("/api/records", recordRouter);
+app.use("/api/dashboard", dashboardRouter);
 
 // Future routes:
 // app.use("/api/users", authenticate, userRouter);
-// app.use("/api/dashboard", authenticate, dashboardRouter);
 
 // ─── Health Check ──────────────────────────────────────
 
