@@ -1,0 +1,76 @@
+// ─────────────────────────────────────────────────────────
+// Prisma Schema — Zorvyn Finance Backend
+// ─────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ─────────────────────────────────────────────
+
+enum Role {
+  Viewer
+  Analyst
+  Admin
+}
+
+enum UserStatus {
+  active
+  inactive
+}
+
+enum RecordType {
+  income
+  expense
+}
+
+// ─── Models ────────────────────────────────────────────
+
+/// Application user with role-based access control.
+model User {
+  id            Int               @id @default(autoincrement())
+  name          String            @db.VarChar(255)
+  email         String            @unique @db.VarChar(320)
+  password_hash String            @db.Text
+  role          Role              @default(Viewer)
+  status        UserStatus        @default(active)
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  // Relations
+  records       FinancialRecord[]
+
+  // Indexes
+  @@index([role])
+  @@index([status])
+  @@map("users")
+}
+
+/// Financial transaction record linked to its creator.
+/// Uses Decimal(15,2) for ACID-compliant currency handling.
+model FinancialRecord {
+  id        Int        @id @default(autoincrement())
+  amount    Decimal    @db.Decimal(15, 2)
+  type      RecordType
+  category  String     @db.VarChar(100)
+  date      DateTime   @db.Date
+  notes     String?    @db.Text
+  createdBy Int        @map("created_by")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  // Relations — cascade delete when parent user is removed
+  creator   User       @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  // Indexes for query performance on common filter/sort columns
+  @@index([type])
+  @@index([category])
+  @@index([date])
+  @@index([createdBy])
+  @@map("financial_records")
+}
