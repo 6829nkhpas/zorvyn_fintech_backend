@@ -3,7 +3,7 @@
 // Adds typed `user` property set by the auth middleware.
 // ─────────────────────────────────────────────────────────
 
-import { Role } from "@prisma/client";
+import { Role } from "../generated/prisma";
 
 declare global {
   namespace Express {

@@ -33,17 +33,17 @@ enum RecordType {
 
 /// Application user with role-based access control.
 model User {
-  id            Int               @id @default(autoincrement())
-  name          String            @db.VarChar(255)
-  email         String            @unique @db.VarChar(320)
-  password_hash String            @db.Text
-  role          Role              @default(Viewer)
-  status        UserStatus        @default(active)
-  createdAt     DateTime          @default(now()) @map("created_at")
-  updatedAt     DateTime          @updatedAt @map("updated_at")
+  id            Int        @id @default(autoincrement())
+  name          String     @db.VarChar(255)
+  email         String     @unique @db.VarChar(320)
+  password_hash String     @db.Text
+  role          Role       @default(Viewer)
+  status        UserStatus @default(active)
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
 
   // Relations
-  records       FinancialRecord[]
+  records FinancialRecord[]
 
   // Indexes
   @@index([role])
@@ -65,7 +65,7 @@ model FinancialRecord {
   updatedAt DateTime   @updatedAt @map("updated_at")
 
   // Relations — cascade delete when parent user is removed
-  creator   User       @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  creator User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
 
   // Indexes for query performance on common filter/sort columns
   @@index([type])
