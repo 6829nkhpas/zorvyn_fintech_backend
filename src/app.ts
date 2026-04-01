@@ -6,6 +6,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { authRouter } from "./modules/auth/auth.routes.js";
+import { recordRouter } from "./modules/records/record.routes.js";
 import { sendError } from "./utils/response.js";
 
 const app = express();
@@ -19,10 +20,10 @@ app.use(express.json({ limit: "1mb" })); // JSON body parser
 // ─── API Routes ────────────────────────────────────────
 
 app.use("/api/auth", authRouter);
+app.use("/api/records", recordRouter);
 
-// Future Phase 3 routes will be mounted here:
+// Future routes:
 // app.use("/api/users", authenticate, userRouter);
-// app.use("/api/records", authenticate, recordRouter);
 // app.use("/api/dashboard", authenticate, dashboardRouter);
 
 // ─── Health Check ──────────────────────────────────────
