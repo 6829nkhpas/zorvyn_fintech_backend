@@ -9,6 +9,7 @@ import { authRouter } from "./modules/auth/auth.routes.js";
 import { recordRouter } from "./modules/records/record.routes.js";
 import { dashboardRouter } from "./modules/dashboard/dashboard.routes.js";
 import { sendError } from "./utils/response.js";
+import { globalErrorHandler } from "./middleware/index.js";
 
 const app = express();
 
@@ -24,9 +25,6 @@ app.use("/api/auth", authRouter);
 app.use("/api/records", recordRouter);
 app.use("/api/dashboard", dashboardRouter);
 
-// Future routes:
-// app.use("/api/users", authenticate, userRouter);
-
 // ─── Health Check ──────────────────────────────────────
 
 app.get("/health", (_req, res) => {
@@ -34,9 +32,16 @@ app.get("/health", (_req, res) => {
 });
 
 // ─── 404 Handler ───────────────────────────────────────
+// Must come AFTER all route registrations.
 
 app.use((_req, res) => {
   sendError(res, "Route not found", 404);
 });
+
+// ─── Global Error Handler ──────────────────────────────
+// Must be the LAST middleware registered.
+// Express identifies error handlers by their 4-arg signature.
+
+app.use(globalErrorHandler);
 
 export { app };
