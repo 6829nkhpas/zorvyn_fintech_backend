@@ -45,7 +45,7 @@ export async function findAllRecords(query: RecordQueryInput) {
   const { type, category, startDate, endDate, page, limit } = query;
 
   // Build dynamic where clause — only apply filters that exist
-  const where: Prisma.FinancialRecordWhereInput = {};
+  const where: Prisma.FinancialRecordWhereInput = { deletedAt: null };
 
   if (type) {
     where.type = type;
@@ -94,8 +94,8 @@ export async function findAllRecords(query: RecordQueryInput) {
 // ─── Find One ──────────────────────────────────────────
 
 export async function findRecordById(id: number) {
-  const record = await prisma.financialRecord.findUnique({
-    where: { id },
+  const record = await prisma.financialRecord.findFirst({
+    where: { id, deletedAt: null },
   });
 
   if (!record) {
@@ -143,8 +143,11 @@ export async function updateRecord(
 // ─── Delete ────────────────────────────────────────────
 
 export async function deleteRecord(id: number) {
-  // Verify existence first
+  // Verify existence (and ensure it hasn't been soft-deleted already)
   await findRecordById(id);
 
-  await prisma.financialRecord.delete({ where: { id } });
+  await prisma.financialRecord.update({
+    where: { id },
+    data: { deletedAt: new Date() },
+  });
 }

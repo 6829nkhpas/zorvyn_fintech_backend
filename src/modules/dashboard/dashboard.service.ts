@@ -50,25 +50,27 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
     await Promise.all([
       // 1. Total income — DB-level SUM
       prisma.financialRecord.aggregate({
-        where: { type: "income" },
+        where: { type: "income", deletedAt: null },
         _sum: { amount: true },
       }),
 
       // 2. Total expenses — DB-level SUM
       prisma.financialRecord.aggregate({
-        where: { type: "expense" },
+        where: { type: "expense", deletedAt: null },
         _sum: { amount: true },
       }),
 
       // 3. Category breakdown — DB-level GROUP BY + SUM
       prisma.financialRecord.groupBy({
         by: ["category"],
+        where: { deletedAt: null },
         _sum: { amount: true },
         orderBy: { _sum: { amount: "desc" } },
       }),
 
       // 4. Recent activity — last 5 records by creation time
       prisma.financialRecord.findMany({
+        where: { deletedAt: null },
         orderBy: { createdAt: "desc" },
         take: 5,
       }),
