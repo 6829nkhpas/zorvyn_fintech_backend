@@ -1,6 +1,6 @@
-// ─────────────────────────────────────────────────────────
+
 // Prisma Schema — Zorvyn Finance Backend
-// ─────────────────────────────────────────────────────────
+
 
 generator client {
   provider = "prisma-client-js"
