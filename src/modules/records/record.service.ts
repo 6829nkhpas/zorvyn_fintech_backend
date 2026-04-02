@@ -7,7 +7,7 @@
 
 import { prisma } from "../../lib/prisma.js";
 import { Prisma } from "../../generated/prisma/index.js";
-import { redis, isRedisReady } from "../../lib/redis.js";
+import { redis, ensureConnected } from "../../lib/redis.js";
 import type { RecordQueryInput, CreateRecordInput } from "./record.validation.js";
 
 // ─── Cache key (must match dashboard.service.ts) ───────
@@ -23,7 +23,8 @@ const DASHBOARD_CACHE_KEY = "dashboard:summary";
  * must not break a successful DB mutation.
  */
 async function invalidateDashboardCache(): Promise<void> {
-  if (!isRedisReady()) return;
+  const connected = await ensureConnected();
+  if (!connected) return;
   try {
     await redis.del(DASHBOARD_CACHE_KEY);
   } catch (err) {

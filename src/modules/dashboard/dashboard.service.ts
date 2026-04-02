@@ -8,7 +8,7 @@
 
 import { prisma } from "../../lib/prisma.js";
 import { Prisma } from "../../generated/prisma/index.js";
-import { redis, isRedisReady } from "../../lib/redis.js";
+import { redis, ensureConnected } from "../../lib/redis.js";
 
 // ─── Cache config ──────────────────────────────────────
 
@@ -54,7 +54,9 @@ function decimalToNumber(value: Prisma.Decimal | null): number {
 
 export async function getDashboardSummary(): Promise<DashboardSummary> {
   // ── 1. Try reading from Redis cache ──────────────────
-  if (isRedisReady()) {
+  const redisAvailable = await ensureConnected();
+
+  if (redisAvailable) {
     try {
       const cached = await redis.get(CACHE_KEY);
       if (cached) {
@@ -123,13 +125,13 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
     })),
   };
 
-  // ── 3. Write result to cache (fire-and-forget) ───────
-  if (isRedisReady()) {
-    redis
-      .setEx(CACHE_KEY, CACHE_TTL_SECONDS, JSON.stringify(summary))
-      .catch((err) => {
-        console.error("[Redis] Cache write error:", (err as Error).message);
-      });
+  // ── 3. Write result to cache ─────────────────────────
+  if (redisAvailable) {
+    try {
+      await redis.setEx(CACHE_KEY, CACHE_TTL_SECONDS, JSON.stringify(summary));
+    } catch (err) {
+      console.error("[Redis] Cache write error:", (err as Error).message);
+    }
   }
 
   return summary;
