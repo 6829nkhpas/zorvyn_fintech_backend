@@ -1,9 +1,7 @@
-// ─────────────────────────────────────────────────────────
 // Async Controller Wrapper
 // Wraps async route handlers to forward thrown errors
 // to Express's next() — preventing unhandled rejections
 // from crashing the Node process.
-// ─────────────────────────────────────────────────────────
 
 import type { Request, Response, NextFunction, RequestHandler } from "express";
 

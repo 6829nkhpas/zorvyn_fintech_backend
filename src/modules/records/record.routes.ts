@@ -1,7 +1,7 @@
-// ─────────────────────────────────────────────────────────
+
 // Records Module — Route Definitions
 // All routes require authentication via JWT middleware.
-// ─────────────────────────────────────────────────────────
+
 
 import { Router } from "express";
 import { authenticate, authorize } from "../../middleware/index.js";
@@ -15,10 +15,10 @@ import {
 
 const recordRouter = Router();
 
-// ─── Apply authentication to ALL record routes ────────
+// Apply authentication to ALL record routes
 recordRouter.use(authenticate);
 
-// ─── Read Routes — Admin + Analyst ────────────────────
+// Read Routes — Admin + Analyst
 
 /**
  * GET /api/records
@@ -41,7 +41,7 @@ recordRouter.get(
   getRecordByIdController
 );
 
-// ─── Write Routes — Admin Only ─────────────────────────
+// Write Routes — Admin Only
 
 /**
  * POST /api/records

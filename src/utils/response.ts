@@ -1,8 +1,7 @@
-// ─────────────────────────────────────────────────────────
+
 // Consistent API Response Helpers
 // Every endpoint MUST use these to guarantee the shape:
-//   { success: boolean, data: T | null, error: string | null }
-// ─────────────────────────────────────────────────────────
+// { success: boolean, data: T | null, error: string | null }
 
 import { Response } from "express";
 
@@ -12,9 +11,8 @@ export interface ApiResponse<T = unknown> {
   error: string | null;
 }
 
-/**
- * Send a success response.
- */
+// Send a success response.
+
 export function sendSuccess<T>(
   res: Response,
   data: T,
@@ -27,9 +25,9 @@ export function sendSuccess<T>(
   } satisfies ApiResponse<T>);
 }
 
-/**
- * Send an error response.
- */
+
+ // Send an error response.
+
 export function sendError(
   res: Response,
   error: string,

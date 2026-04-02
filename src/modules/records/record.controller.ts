@@ -1,8 +1,6 @@
-// ─────────────────────────────────────────────────────────
 // Records Module — Controller Layer
 // Thin HTTP adapter: validates → delegates → responds.
 // Errors are forwarded to the global error handler via catchAsync.
-// ─────────────────────────────────────────────────────────
 
 import type { Request, Response } from "express";
 import {
@@ -21,7 +19,7 @@ import {
 import { sendSuccess, sendError } from "../../utils/response.js";
 import { catchAsync } from "../../utils/catchAsync.js";
 
-// ─── POST /api/records ─────────────────────────────────
+// POST /api/records
 
 export const createRecordController = catchAsync(
   async (req: Request, res: Response): Promise<void> => {
@@ -38,7 +36,7 @@ export const createRecordController = catchAsync(
   }
 );
 
-// ─── GET /api/records ──────────────────────────────────
+// GET /api/records
 
 export const getAllRecordsController = catchAsync(
   async (req: Request, res: Response): Promise<void> => {
@@ -55,7 +53,7 @@ export const getAllRecordsController = catchAsync(
   }
 );
 
-// ─── GET /api/records/:id ──────────────────────────────
+// GET /api/records/:id
 
 export const getRecordByIdController = catchAsync(
   async (req: Request, res: Response): Promise<void> => {
@@ -72,7 +70,7 @@ export const getRecordByIdController = catchAsync(
   }
 );
 
-// ─── PUT /api/records/:id ──────────────────────────────
+// PUT /api/records/:id 
 
 export const updateRecordController = catchAsync(
   async (req: Request, res: Response): Promise<void> => {
@@ -97,7 +95,7 @@ export const updateRecordController = catchAsync(
   }
 );
 
-// ─── DELETE /api/records/:id ───────────────────────────
+// DELETE /api/records/:id
 
 export const deleteRecordController = catchAsync(
   async (req: Request, res: Response): Promise<void> => {

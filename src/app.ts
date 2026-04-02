@@ -1,6 +1,6 @@
-// ─────────────────────────────────────────────────────────
+
 // Zorvyn Finance Backend — Express App Configuration
-// ─────────────────────────────────────────────────────────
+
 
 import express from "express";
 import cors from "cors";
@@ -13,32 +13,32 @@ import { globalErrorHandler } from "./middleware/index.js";
 
 const app = express();
 
-// ─── Global Middleware ─────────────────────────────────
+// ─── Global Middleware
 
 app.use(helmet());                     // Security headers
-app.use(cors());                       // CORS (permissive for dev)
+app.use(cors());                       // CORS
 app.use(express.json({ limit: "1mb" })); // JSON body parser
 
-// ─── API Routes ────────────────────────────────────────
+// ─── API Routes
 
 app.use("/api/auth", authRouter);
 app.use("/api/records", recordRouter);
 app.use("/api/dashboard", dashboardRouter);
 
-// ─── Health Check ──────────────────────────────────────
+// ─── Health Check 
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// ─── 404 Handler ───────────────────────────────────────
+// ─── 404 Handler 
 // Must come AFTER all route registrations.
 
 app.use((_req, res) => {
   sendError(res, "Route not found", 404);
 });
 
-// ─── Global Error Handler ──────────────────────────────
+// ─── Global Error Handler
 // Must be the LAST middleware registered.
 // Express identifies error handlers by their 4-arg signature.
 
