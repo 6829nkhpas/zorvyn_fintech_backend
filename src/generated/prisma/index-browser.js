@@ -140,7 +140,8 @@ exports.Prisma.FinancialRecordScalarFieldEnum = {
   notes: 'notes',
   createdBy: 'createdBy',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.SortOrder = {

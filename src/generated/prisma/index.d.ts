@@ -2212,6 +2212,7 @@ export namespace Prisma {
     createdBy: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    deletedAt: Date | null
   }
 
   export type FinancialRecordMaxAggregateOutputType = {
@@ -2224,6 +2225,7 @@ export namespace Prisma {
     createdBy: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    deletedAt: Date | null
   }
 
   export type FinancialRecordCountAggregateOutputType = {
@@ -2236,6 +2238,7 @@ export namespace Prisma {
     createdBy: number
     createdAt: number
     updatedAt: number
+    deletedAt: number
     _all: number
   }
 
@@ -2262,6 +2265,7 @@ export namespace Prisma {
     createdBy?: true
     createdAt?: true
     updatedAt?: true
+    deletedAt?: true
   }
 
   export type FinancialRecordMaxAggregateInputType = {
@@ -2274,6 +2278,7 @@ export namespace Prisma {
     createdBy?: true
     createdAt?: true
     updatedAt?: true
+    deletedAt?: true
   }
 
   export type FinancialRecordCountAggregateInputType = {
@@ -2286,6 +2291,7 @@ export namespace Prisma {
     createdBy?: true
     createdAt?: true
     updatedAt?: true
+    deletedAt?: true
     _all?: true
   }
 
@@ -2385,6 +2391,7 @@ export namespace Prisma {
     createdBy: number
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
     _count: FinancialRecordCountAggregateOutputType | null
     _avg: FinancialRecordAvgAggregateOutputType | null
     _sum: FinancialRecordSumAggregateOutputType | null
@@ -2416,6 +2423,7 @@ export namespace Prisma {
     createdBy?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    deletedAt?: boolean
     creator?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["financialRecord"]>
 
@@ -2429,6 +2437,7 @@ export namespace Prisma {
     createdBy?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    deletedAt?: boolean
     creator?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["financialRecord"]>
 
@@ -2442,6 +2451,7 @@ export namespace Prisma {
     createdBy?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    deletedAt?: boolean
     creator?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["financialRecord"]>
 
@@ -2455,9 +2465,10 @@ export namespace Prisma {
     createdBy?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    deletedAt?: boolean
   }
 
-  export type FinancialRecordOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "amount" | "type" | "category" | "date" | "notes" | "createdBy" | "createdAt" | "updatedAt", ExtArgs["result"]["financialRecord"]>
+  export type FinancialRecordOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "amount" | "type" | "category" | "date" | "notes" | "createdBy" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["financialRecord"]>
   export type FinancialRecordInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creator?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2483,6 +2494,7 @@ export namespace Prisma {
       createdBy: number
       createdAt: Date
       updatedAt: Date
+      deletedAt: Date | null
     }, ExtArgs["result"]["financialRecord"]>
     composites: {}
   }
@@ -2916,6 +2928,7 @@ export namespace Prisma {
     readonly createdBy: FieldRef<"FinancialRecord", 'Int'>
     readonly createdAt: FieldRef<"FinancialRecord", 'DateTime'>
     readonly updatedAt: FieldRef<"FinancialRecord", 'DateTime'>
+    readonly deletedAt: FieldRef<"FinancialRecord", 'DateTime'>
   }
     
 
@@ -3372,7 +3385,8 @@ export namespace Prisma {
     notes: 'notes',
     createdBy: 'createdBy',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
   };
 
   export type FinancialRecordScalarFieldEnum = (typeof FinancialRecordScalarFieldEnum)[keyof typeof FinancialRecordScalarFieldEnum]
@@ -3607,6 +3621,7 @@ export namespace Prisma {
     createdBy?: IntFilter<"FinancialRecord"> | number
     createdAt?: DateTimeFilter<"FinancialRecord"> | Date | string
     updatedAt?: DateTimeFilter<"FinancialRecord"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"FinancialRecord"> | Date | string | null
     creator?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -3620,6 +3635,7 @@ export namespace Prisma {
     createdBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     creator?: UserOrderByWithRelationInput
   }
 
@@ -3636,6 +3652,7 @@ export namespace Prisma {
     createdBy?: IntFilter<"FinancialRecord"> | number
     createdAt?: DateTimeFilter<"FinancialRecord"> | Date | string
     updatedAt?: DateTimeFilter<"FinancialRecord"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"FinancialRecord"> | Date | string | null
     creator?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
@@ -3649,6 +3666,7 @@ export namespace Prisma {
     createdBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     _count?: FinancialRecordCountOrderByAggregateInput
     _avg?: FinancialRecordAvgOrderByAggregateInput
     _max?: FinancialRecordMaxOrderByAggregateInput
@@ -3669,6 +3687,7 @@ export namespace Prisma {
     createdBy?: IntWithAggregatesFilter<"FinancialRecord"> | number
     createdAt?: DateTimeWithAggregatesFilter<"FinancialRecord"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"FinancialRecord"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"FinancialRecord"> | Date | string | null
   }
 
   export type UserCreateInput = {
@@ -3757,6 +3776,7 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    deletedAt?: Date | string | null
     creator: UserCreateNestedOneWithoutRecordsInput
   }
 
@@ -3770,6 +3790,7 @@ export namespace Prisma {
     createdBy: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    deletedAt?: Date | string | null
   }
 
   export type FinancialRecordUpdateInput = {
@@ -3780,6 +3801,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     creator?: UserUpdateOneRequiredWithoutRecordsNestedInput
   }
 
@@ -3793,6 +3815,7 @@ export namespace Prisma {
     createdBy?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type FinancialRecordCreateManyInput = {
@@ -3805,6 +3828,7 @@ export namespace Prisma {
     createdBy: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    deletedAt?: Date | string | null
   }
 
   export type FinancialRecordUpdateManyMutationInput = {
@@ -3815,6 +3839,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type FinancialRecordUncheckedUpdateManyInput = {
@@ -3827,6 +3852,7 @@ export namespace Prisma {
     createdBy?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -4032,6 +4058,17 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
@@ -4052,6 +4089,7 @@ export namespace Prisma {
     createdBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    deletedAt?: SortOrder
   }
 
   export type FinancialRecordAvgOrderByAggregateInput = {
@@ -4070,6 +4108,7 @@ export namespace Prisma {
     createdBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    deletedAt?: SortOrder
   }
 
   export type FinancialRecordMinOrderByAggregateInput = {
@@ -4082,6 +4121,7 @@ export namespace Prisma {
     createdBy?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    deletedAt?: SortOrder
   }
 
   export type FinancialRecordSumOrderByAggregateInput = {
@@ -4132,6 +4172,20 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type FinancialRecordCreateNestedManyWithoutCreatorInput = {
@@ -4220,6 +4274,10 @@ export namespace Prisma {
 
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type UserUpdateOneRequiredWithoutRecordsNestedInput = {
@@ -4390,6 +4448,17 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedDecimalWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
@@ -4444,6 +4513,20 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type FinancialRecordCreateWithoutCreatorInput = {
     amount: Decimal | DecimalJsLike | number | string
     type: $Enums.RecordType
@@ -4452,6 +4535,7 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    deletedAt?: Date | string | null
   }
 
   export type FinancialRecordUncheckedCreateWithoutCreatorInput = {
@@ -4463,6 +4547,7 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    deletedAt?: Date | string | null
   }
 
   export type FinancialRecordCreateOrConnectWithoutCreatorInput = {
@@ -4504,6 +4589,7 @@ export namespace Prisma {
     createdBy?: IntFilter<"FinancialRecord"> | number
     createdAt?: DateTimeFilter<"FinancialRecord"> | Date | string
     updatedAt?: DateTimeFilter<"FinancialRecord"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"FinancialRecord"> | Date | string | null
   }
 
   export type UserCreateWithoutRecordsInput = {
@@ -4573,6 +4659,7 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    deletedAt?: Date | string | null
   }
 
   export type FinancialRecordUpdateWithoutCreatorInput = {
@@ -4583,6 +4670,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type FinancialRecordUncheckedUpdateWithoutCreatorInput = {
@@ -4594,6 +4682,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type FinancialRecordUncheckedUpdateManyWithoutCreatorInput = {
@@ -4605,6 +4694,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
 
