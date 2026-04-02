@@ -2,10 +2,18 @@
 // Dashboard Module — Service Layer
 // All aggregation is pushed to PostgreSQL via Prisma's
 // aggregate / groupBy — zero in-memory computation.
+// Results are cached in Redis (1-hour TTL) to protect
+// the database from repeated heavy aggregation queries.
 // ─────────────────────────────────────────────────────────
 
 import { prisma } from "../../lib/prisma.js";
 import { Prisma } from "../../generated/prisma/index.js";
+import { redis, isRedisReady } from "../../lib/redis.js";
+
+// ─── Cache config ──────────────────────────────────────
+
+const CACHE_KEY = "dashboard:summary";
+const CACHE_TTL_SECONDS = 3600; // 1 hour
 
 // ─── Types ─────────────────────────────────────────────
 
@@ -45,6 +53,20 @@ function decimalToNumber(value: Prisma.Decimal | null): number {
 // ─── Main Query ────────────────────────────────────────
 
 export async function getDashboardSummary(): Promise<DashboardSummary> {
+  // ── 1. Try reading from Redis cache ──────────────────
+  if (isRedisReady()) {
+    try {
+      const cached = await redis.get(CACHE_KEY);
+      if (cached) {
+        return JSON.parse(cached) as DashboardSummary;
+      }
+    } catch (err) {
+      // Cache read failed — fall through to DB query
+      console.error("[Redis] Cache read error:", (err as Error).message);
+    }
+  }
+
+  // ── 2. Cache miss / unavailable — query the database ─
   // Run all independent queries in parallel for best latency.
   const [incomeAgg, expenseAgg, categoryGroups, recentRecords] =
     await Promise.all([
@@ -79,7 +101,7 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
   const totalIncome = decimalToNumber(incomeAgg._sum.amount);
   const totalExpenses = decimalToNumber(expenseAgg._sum.amount);
 
-  return {
+  const summary: DashboardSummary = {
     totalIncome,
     totalExpenses,
     netBalance: totalIncome - totalExpenses,
@@ -100,4 +122,15 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
       createdAt: record.createdAt,
     })),
   };
+
+  // ── 3. Write result to cache (fire-and-forget) ───────
+  if (isRedisReady()) {
+    redis
+      .setEx(CACHE_KEY, CACHE_TTL_SECONDS, JSON.stringify(summary))
+      .catch((err) => {
+        console.error("[Redis] Cache write error:", (err as Error).message);
+      });
+  }
+
+  return summary;
 }

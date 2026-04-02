@@ -1,11 +1,35 @@
 // ─────────────────────────────────────────────────────────
 // Records Module — Service Layer
 // Pure business logic: no HTTP concepts (req/res).
+// Mutations invalidate the Redis dashboard cache so
+// analytics never reflect stale financial data.
 // ─────────────────────────────────────────────────────────
 
 import { prisma } from "../../lib/prisma.js";
 import { Prisma } from "../../generated/prisma/index.js";
+import { redis, isRedisReady } from "../../lib/redis.js";
 import type { RecordQueryInput, CreateRecordInput } from "./record.validation.js";
+
+// ─── Cache key (must match dashboard.service.ts) ───────
+
+const DASHBOARD_CACHE_KEY = "dashboard:summary";
+
+// ─── Helpers ───────────────────────────────────────────
+
+/**
+ * Delete the dashboard summary cache so the next request
+ * fetches fresh data from the database.
+ * Errors are logged but never bubble up — cache invalidation
+ * must not break a successful DB mutation.
+ */
+async function invalidateDashboardCache(): Promise<void> {
+  if (!isRedisReady()) return;
+  try {
+    await redis.del(DASHBOARD_CACHE_KEY);
+  } catch (err) {
+    console.error("[Redis] Cache invalidation error:", (err as Error).message);
+  }
+}
 
 // ─── Error Class ───────────────────────────────────────
 
@@ -35,6 +59,8 @@ export async function createRecord(
       createdBy: userId,
     },
   });
+
+  await invalidateDashboardCache();
 
   return record;
 }
@@ -137,6 +163,8 @@ export async function updateRecord(
     data: updateData,
   });
 
+  await invalidateDashboardCache();
+
   return record;
 }
 
@@ -150,4 +178,6 @@ export async function deleteRecord(id: number) {
     where: { id },
     data: { deletedAt: new Date() },
   });
+
+  await invalidateDashboardCache();
 }
