@@ -63,6 +63,7 @@ model FinancialRecord {
   createdBy Int        @map("created_by")
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @updatedAt @map("updated_at")
+  deletedAt DateTime?  @map("deleted_at")
 
   // Relations — cascade delete when parent user is removed
   creator User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
@@ -72,5 +73,6 @@ model FinancialRecord {
   @@index([category])
   @@index([date])
   @@index([createdBy])
+  @@index([deletedAt])
   @@map("financial_records")
 }
