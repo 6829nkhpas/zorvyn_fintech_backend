@@ -1,0 +1,70 @@
+# ─────────────────────────────────────────────────────────
+# Zorvyn Finance Backend — Docker Compose
+# Spins up the full stack: App + PostgreSQL + Redis
+#
+# Usage:
+#   docker compose up -d          # start all services
+#   docker compose logs -f app    # tail application logs
+#   docker compose down -v        # stop & destroy volumes
+# ─────────────────────────────────────────────────────────
+
+services:
+  # ── PostgreSQL ──────────────────────────────────────────
+  postgres:
+    image: postgres:17-alpine
+    container_name: zorvyn-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-zorvyn}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zorvyn_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-zorvyn_finance}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zorvyn}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis ───────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: zorvyn-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── Application ─────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zorvyn-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-zorvyn}:${POSTGRES_PASSWORD:-zorvyn_secret}@postgres:5432/${POSTGRES_DB:-zorvyn_finance}
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-change-this-to-a-256-bit-secret}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-24h}
+      PORT: 3000
+      NODE_ENV: production
+    ports:
+      - "${PORT:-3000}:3000"
+
+volumes:
+  pgdata:
+  redisdata:

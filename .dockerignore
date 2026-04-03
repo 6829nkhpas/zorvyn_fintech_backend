@@ -1,0 +1,12 @@
+node_modules
+dist
+.env
+.git
+.gitignore
+.vscode
+.idea
+*.log
+npm-debug.log*
+README.md
+docs/
+test_redis_cache.sh

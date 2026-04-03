@@ -10,6 +10,7 @@
 [![Prisma](https://img.shields.io/badge/Prisma-7.x-2D3748?style=flat-square&logo=prisma&logoColor=white)](https://www.prisma.io/)
 [![Redis](https://img.shields.io/badge/Redis-7+-DC382D?style=flat-square&logo=redis&logoColor=white)](https://redis.io/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square&logo=docker&logoColor=white)](https://docs.docker.com/compose/)
 
 A production-hardened RESTful API for financial record management and real-time dashboard analytics, built with strict ACID compliance, role-based access control, and a Redis cache-aside layer for sub-millisecond aggregation responses.
 
@@ -54,6 +55,7 @@ A production-hardened RESTful API for financial record management and real-time 
 | **Zod Validation** | Runtime schema enforcement on all inbound payloads with type-safe error messages |
 | **Global Error Handling** | Centralized error middleware with Prisma/Zod-aware formatters; zero stack trace leaks in production |
 | **Idempotent Seeding** | `upsert`-based seed script safe to re-run without data corruption |
+| **Dockerized Stack** | Multi-stage `Dockerfile` + `docker-compose.yml` — full stack (App + Postgres + Redis) in one command |
 
 ---
 
@@ -99,6 +101,7 @@ A production-hardened RESTful API for financial record management and real-time 
 | Cache | Redis | 7+ |
 | Validation | Zod | 4.x |
 | Auth | jsonwebtoken + bcryptjs | — |
+| Containerization | Docker + Compose | — |
 
 ---
 
@@ -137,7 +140,11 @@ zorvyn-finance-backend/
 ├── docs/
 │   ├── architecture.png       # System architecture diagram
 │   └── erd.png                # Entity relationship diagram
+├── Dockerfile                 # Multi-stage production build
+├── docker-compose.yml         # Full stack: App + PostgreSQL + Redis
+├── .dockerignore              # Docker build context exclusions
 ├── .env.example               # Environment variable template
+├── prisma.config.ts           # Prisma datasource configuration
 ├── package.json
 ├── tsconfig.json
 └── jest.config.ts
@@ -149,9 +156,8 @@ zorvyn-finance-backend/
 
 ### Prerequisites
 
-- **Node.js** ≥ 22
-- **Docker** (for PostgreSQL & Redis) or local installations
-- **npm** ≥ 10
+- **Docker** & **Docker Compose** (recommended — runs everything)
+- **Node.js** ≥ 22 & **npm** ≥ 10 (only for local development without Docker)
 
 ### 1. Clone & Install
 
@@ -178,26 +184,38 @@ cp .env.example .env
 | `NODE_ENV` | Environment flag | `development` |
 | `REDIS_URL` | Redis connection string | `redis://localhost:6379` |
 
-### 3. Start Infrastructure (Docker)
+### 3. Quick Start — Docker Compose (Recommended)
+
+Spin up the entire stack (App + PostgreSQL + Redis) with a single command:
 
 ```bash
-# PostgreSQL
-docker run -d \
-  --name zorvyn-postgres \
-  -e POSTGRES_USER=user \
-  -e POSTGRES_PASSWORD=password \
-  -e POSTGRES_DB=zorvyn_finance \
-  -p 5432:5432 \
-  postgres:17-alpine
-
-# Redis
-docker run -d \
-  --name zorvyn-redis \
-  -p 6379:6379 \
-  redis:7-alpine
+docker compose up -d
 ```
 
-### 4. Database Setup
+This will:
+- Start PostgreSQL 17 and Redis 7 with health checks
+- Build the application via a multi-stage Dockerfile
+- Run Prisma migrations automatically on startup
+- Expose the API on `http://localhost:3000`
+
+```bash
+# Verify
+curl http://localhost:3000/health
+# → { "status": "ok", "timestamp": "..." }
+
+# Seed the database
+docker compose exec app npx tsx prisma/seed.ts
+
+# View logs
+docker compose logs -f app
+
+# Tear down (including volumes)
+docker compose down -v
+```
+
+### 3b. Manual Setup (Without Docker)
+
+If you prefer running locally without Docker, start PostgreSQL and Redis yourself, then:
 
 ```bash
 # Generate Prisma client
@@ -210,15 +228,7 @@ npx prisma migrate dev
 npm run db:seed
 ```
 
-**Seed Credentials:**
-
-| Role | Email | Password |
-|---|---|---|
-| Admin | `admin@zorvyn.com` | `Admin@1234` |
-| Analyst | `analyst@zorvyn.com` | `Analyst@1234` |
-| Viewer | `viewer@zorvyn.com` | `Viewer@1234` |
-
-### 5. Start the Server
+### 4. Start the Server (Local Dev)
 
 ```bash
 # Development (hot-reload via tsx)
@@ -235,6 +245,14 @@ The server starts at `http://localhost:3000`. Verify with:
 curl http://localhost:3000/health
 # → { "status": "ok", "timestamp": "..." }
 ```
+
+**Seed Credentials:**
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@zorvyn.com` | `Admin@1234` |
+| Analyst | `analyst@zorvyn.com` | `Analyst@1234` |
+| Viewer | `viewer@zorvyn.com` | `Viewer@1234` |
 
 ---
 
@@ -300,11 +318,11 @@ All responses follow a standardized envelope:
 {
   "success": true,
   "data": {
-    "totalIncome": "705000.00",
-    "totalExpenses": "144001.50",
-    "netBalance": "560998.50",
+    "totalIncome": 705000,
+    "totalExpenses": 144001.5,
+    "netBalance": 560998.5,
     "categoryBreakdown": [
-      { "category": "Client Payment", "type": "income", "_sum": { "amount": "335000.00" } }
+      { "category": "Client Payment", "total": 335000 }
     ],
     "recentActivity": [ ... ]
   },
@@ -380,6 +398,8 @@ Tests cover:
 | `npm run db:seed` | Seed database with demo data |
 | `npm run db:studio` | Open Prisma Studio GUI |
 | `npm run db:generate` | Regenerate Prisma client |
+| `docker compose up -d` | Start full stack (App + PostgreSQL + Redis) |
+| `docker compose down -v` | Stop stack and destroy volumes |
 
 ---
 
