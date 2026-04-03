@@ -340,31 +340,31 @@ All responses follow a standardized envelope:
 
 ## Architectural Decisions
 
-### Why PostgreSQL over NoSQL?
+### PostgreSQL over NoSQL
 
-Financial systems are **relational by nature**. Every transaction belongs to a user, every amount must maintain precision, and every aggregation must be deterministic.
+Money is relational. Transactions belong to users, amounts need exact precision, aggregations must be deterministic. Picking a document store for this would be fighting the data model.
 
-- **ACID Transactions**: PostgreSQL guarantees atomicity on every write — partial inserts and phantom reads are structurally impossible.
-- **Decimal Precision**: The `Decimal(15,2)` column type enforces exact two-decimal-place arithmetic at the storage engine level. MongoDB's `NumberDecimal` (Decimal128) is technically capable but lacks ecosystem-wide ORM support and introduces serialization complexity.
-- **Enum Enforcement**: `Role`, `UserStatus`, and `RecordType` are PostgreSQL-native enums — the database *itself* rejects invalid state, not just application code.
-- **Relational Integrity**: Foreign key constraints with `ON DELETE CASCADE` guarantee referential consistency. In a document store, orphaned sub-documents are a class of bug that simply doesn't exist here.
+- `Decimal(15,2)` at the column level — no floating-point drift, ever. JS `Number` is IEEE 754; it *will* round your sums wrong.
+- `Role`, `UserStatus`, `RecordType` are Postgres-native enums. The DB rejects bad state before your code even runs.
+- FK constraints + `ON DELETE CASCADE` = no orphaned records. Mongo can't structurally guarantee this.
+- ACID on every write. Partial inserts don't exist here.
 
-### Why DB-Level Aggregations?
+### DB-Level Aggregations
 
-Dashboard analytics use `SUM`, `GROUP BY`, and raw Prisma aggregation APIs instead of fetching rows and computing in Node.js:
+All dashboard math (`SUM`, `GROUP BY`) runs inside Postgres, not in Node.js.
 
-- **Performance**: PostgreSQL's query planner optimizes aggregation over indexed columns. Pulling 10,000 records into V8 and reducing them in JavaScript is orders of magnitude slower and memory-intensive.
-- **Correctness**: `Decimal` arithmetic in PostgreSQL is exact. JavaScript's `Number` type is IEEE 754 double-precision — it **will** introduce rounding errors on financial sums. By never deserializing amounts into `Number`, we eliminate this class of bug entirely.
-- **Scalability**: As record volume grows, the aggregation cost remains on the database (which has indexing, query caching, and parallel workers) rather than on the single-threaded Node.js event loop.
+- Postgres has a query planner, indexes, and parallel workers built for this. Pulling 10k rows into V8 to `reduce()` them is slow and memory-wasteful.
+- Decimal arithmetic stays in the DB — amounts never touch JS `Number`, so rounding errors are structurally eliminated.
+- This scales with data volume without adding load to the single-threaded event loop.
 
-### Why Redis Cache-Aside?
+### Redis Cache-Aside
 
-The dashboard endpoint performs multiple aggregation queries per request. Without caching, every page load hammers PostgreSQL with `SUM` + `GROUP BY` across the entire dataset.
+Dashboard hits multiple aggregation queries per request. Without caching, every page load runs `SUM` + `GROUP BY` on the full dataset.
 
-- **Pattern**: Cache-Aside (Lazy Population). On the first request, the service queries PostgreSQL, caches the serialized result in Redis with a 1-hour TTL, and returns it. Subsequent requests are served directly from Redis.
-- **Invalidation**: Any mutation on `FinancialRecord` (create, update, soft-delete) triggers explicit cache eviction via `redis.del()`. This ensures the next dashboard read fetches fresh aggregations.
-- **Graceful Degradation**: The Redis client uses lazy connection with error-swallowing handlers. If Redis is unavailable, the application falls back to direct PostgreSQL queries without crashing.
-- **Why not Write-Through?** Dashboard aggregations are read-heavy, write-infrequent. Pre-computing on every write would waste resources. Cache-aside defers computation until a reader actually needs it.
+- **How it works**: First request → query Postgres → cache result in Redis (1h TTL) → return. Subsequent reads hit Redis directly.
+- **Invalidation**: Any write (create/update/delete) on `FinancialRecord` calls `redis.del()` on the cache key. Next read gets fresh data.
+- **Fallback**: Redis uses lazy connection. If it's down, the app skips cache and queries Postgres directly — no crash, no downtime.
+- **Why not write-through?** Reads >> writes for dashboard data. Pre-computing on every mutation wastes cycles for data nobody's looking at yet.
 
 ---
 
