@@ -1,8 +1,6 @@
-// ─────────────────────────────────────────────────────────
 // Auth Module — Controller Layer
 // Thin HTTP adapter: validates → delegates → responds.
 // Errors are forwarded to the global error handler via catchAsync.
-// ─────────────────────────────────────────────────────────
 
 import type { Request, Response } from "express";
 import { loginSchema } from "./auth.validation.js";

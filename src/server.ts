@@ -1,6 +1,4 @@
-// ─────────────────────────────────────────────────────────
 // Zorvyn Finance Backend — Entry Point
-// ─────────────────────────────────────────────────────────
 
 import { app } from "./app.js";
 import { env } from "./config/env.js";

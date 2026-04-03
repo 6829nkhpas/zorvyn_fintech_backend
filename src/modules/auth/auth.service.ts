@@ -1,7 +1,5 @@
-// ─────────────────────────────────────────────────────────
 // Auth Module — Service Layer
 // Pure business logic: no HTTP concepts (req/res).
-// ─────────────────────────────────────────────────────────
 
 import bcrypt from "bcryptjs";
 import jwt, { type SignOptions } from "jsonwebtoken";
@@ -56,7 +54,7 @@ export async function login(
   return { token };
 }
 
-// ─── Auth-specific error class ─────────────────────────
+// Auth-specific error class
 
 export class AuthError extends Error {
   public readonly statusCode: number;

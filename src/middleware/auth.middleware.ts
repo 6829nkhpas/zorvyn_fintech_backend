@@ -1,6 +1,4 @@
-// ─────────────────────────────────────────────────────────
 // Authentication & Authorization Middleware
-// ─────────────────────────────────────────────────────────
 
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
@@ -9,7 +7,7 @@ import { sendError } from "../utils/response.js";
 import type { AuthTokenPayload } from "../types/jwt.js";
 import type { Role } from "../generated/prisma/index.js";
 
-// ─── authenticate ──────────────────────────────────────
+// authenticate
 // Extracts and verifies the JWT from the Authorization header.
 // On success, attaches the decoded payload to `req.user`.
 
@@ -52,7 +50,7 @@ export function authenticate(
   }
 }
 
-// ─── authorize ─────────────────────────────────────────
+// authorize
 // Factory that returns a middleware checking `req.user.role`
 // against the provided list of allowed roles.
 // MUST be used AFTER `authenticate`.

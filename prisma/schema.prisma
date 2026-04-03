@@ -11,7 +11,7 @@ datasource db {
   provider = "postgresql"
 }
 
-// ─── Enums ─────────────────────────────────────────────
+// Enums
 
 enum Role {
   Viewer
@@ -29,7 +29,7 @@ enum RecordType {
   expense
 }
 
-// ─── Models ────────────────────────────────────────────
+// Models
 
 /// Application user with role-based access control.
 model User {

@@ -1,20 +1,18 @@
-// ─────────────────────────────────────────────────────────
 // Records Module — Service Layer
 // Pure business logic: no HTTP concepts (req/res).
 // Mutations invalidate the Redis dashboard cache so
 // analytics never reflect stale financial data.
-// ─────────────────────────────────────────────────────────
 
 import { prisma } from "../../lib/prisma.js";
 import { Prisma } from "../../generated/prisma/index.js";
 import { redis, ensureConnected } from "../../lib/redis.js";
 import type { RecordQueryInput, CreateRecordInput } from "./record.validation.js";
 
-// ─── Cache key (must match dashboard.service.ts) ───────
+// Cache key (must match dashboard.service.ts)
 
 const DASHBOARD_CACHE_KEY = "dashboard:summary";
 
-// ─── Helpers ───────────────────────────────────────────
+// Helpers
 
 /**
  * Delete the dashboard summary cache so the next request
@@ -32,7 +30,7 @@ async function invalidateDashboardCache(): Promise<void> {
   }
 }
 
-// ─── Error Class ───────────────────────────────────────
+// Error Class
 
 export class RecordError extends Error {
   public readonly statusCode: number;
@@ -44,7 +42,7 @@ export class RecordError extends Error {
   }
 }
 
-// ─── Create ────────────────────────────────────────────
+// Create
 
 export async function createRecord(
   data: CreateRecordInput,
@@ -66,7 +64,7 @@ export async function createRecord(
   return record;
 }
 
-// ─── Find All (with filtering & pagination) ────────────
+// Find All (with filtering & pagination)
 
 export async function findAllRecords(query: RecordQueryInput) {
   const { type, category, startDate, endDate, page, limit } = query;
@@ -118,7 +116,7 @@ export async function findAllRecords(query: RecordQueryInput) {
   };
 }
 
-// ─── Find One ──────────────────────────────────────────
+// Find One
 
 export async function findRecordById(id: number) {
   const record = await prisma.financialRecord.findFirst({
@@ -132,7 +130,7 @@ export async function findRecordById(id: number) {
   return record;
 }
 
-// ─── Update ────────────────────────────────────────────
+// Update
 
 export async function updateRecord(
   id: number,
@@ -169,7 +167,7 @@ export async function updateRecord(
   return record;
 }
 
-// ─── Delete ────────────────────────────────────────────
+// Delete
 
 export async function deleteRecord(id: number) {
   // Verify existence (and ensure it hasn't been soft-deleted already)

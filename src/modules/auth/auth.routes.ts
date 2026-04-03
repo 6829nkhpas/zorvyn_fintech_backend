@@ -1,6 +1,4 @@
-// ─────────────────────────────────────────────────────────
 // Auth Module — Route Definitions
-// ─────────────────────────────────────────────────────────
 
 import { Router } from "express";
 import { loginController } from "./auth.controller.js";

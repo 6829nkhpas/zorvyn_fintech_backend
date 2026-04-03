@@ -1,10 +1,8 @@
-// ─────────────────────────────────────────────────────────
 // Records Module — Zod Validation Schemas
-// ─────────────────────────────────────────────────────────
 
 import { z } from "zod";
 
-// ─── Create Record Schema ──────────────────────────────
+// Create Record Schema
 
 export const createRecordSchema = z.object({
   amount: z
@@ -34,7 +32,7 @@ export const createRecordSchema = z.object({
 
 export type CreateRecordInput = z.infer<typeof createRecordSchema>;
 
-// ─── Update Record Schema ──────────────────────────────
+// Update Record Schema
 // All fields are optional — partial update (PATCH semantics via PUT).
 
 export const updateRecordSchema = z
@@ -70,7 +68,7 @@ export const updateRecordSchema = z
 
 export type UpdateRecordInput = z.infer<typeof updateRecordSchema>;
 
-// ─── Query Params Schema ───────────────────────────────
+// Query Params Schema
 // All fields optional — used for filtering + pagination on GET /api/records.
 // Query params arrive as strings, so we coerce numbers.
 
@@ -112,7 +110,7 @@ export const recordQuerySchema = z.object({
 
 export type RecordQueryInput = z.infer<typeof recordQuerySchema>;
 
-// ─── ID Param Schema ───────────────────────────────────
+// ID Param Schema
 
 export const idParamSchema = z.object({
   id: z.coerce

@@ -1,11 +1,9 @@
-// ─────────────────────────────────────────────────────────
 // Rate Limiting Middleware
 // Prevents brute-force attacks and API abuse.
 //
 // Exports two limiters:
 //   • apiLimiter  — General: 100 requests per 15 min window
 //   • authLimiter — Strict:  5 attempts per 15 min window
-// ─────────────────────────────────────────────────────────
 
 import rateLimit from "express-rate-limit";
 

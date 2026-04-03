@@ -4,7 +4,7 @@ import * as dotenv from "dotenv";
 // Load .env before validation
 dotenv.config();
 
-// ─── Schema ────────────────────────────────────────────
+// Schema
 
 const envSchema = z.object({
   DATABASE_URL: z
@@ -30,7 +30,7 @@ const envSchema = z.object({
     .default("development"),
 });
 
-// ─── Validate & Export ─────────────────────────────────
+// Validate & Export
 
 const parsed = envSchema.safeParse(process.env);
 

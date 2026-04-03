@@ -10,7 +10,7 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
-// ─── Seed Data ─────────────────────────────────────────
+// Seed Data
 
 const SALT_ROUNDS = 12;
 
@@ -134,7 +134,7 @@ const seedRecords: SeedRecord[] = [
   },
 ];
 
-// ─── Seed Execution ────────────────────────────────────
+// Seed Execution
 
 async function main() {
   console.log("🌱 Seeding Zorvyn Finance database...\n");

@@ -3,7 +3,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { env } from "../config/env";
 
-// ─── Singleton PrismaClient ────────────────────────────
+// Singleton PrismaClient
 // Prisma 7 requires an explicit driver adapter.
 // Prevents exhausting the DB connection pool during
 // hot-reloads in development (tsx watch / nodemon).

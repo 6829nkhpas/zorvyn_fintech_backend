@@ -1,4 +1,3 @@
-// ─────────────────────────────────────────────────────────
 // Global Error Handler Middleware
 // Catches all unhandled errors and returns a consistent
 // { success: false, data: null, error: string } response.
@@ -10,7 +9,6 @@
 //   • Everything else                 → 500
 //
 // In production, database stack traces are NEVER leaked.
-// ─────────────────────────────────────────────────────────
 
 import type { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
@@ -31,7 +29,7 @@ export function globalErrorHandler(
   res: Response,
   _next: NextFunction
 ): void {
-  // ─── Zod Validation Errors ───────────────────────────
+  // Zod Validation Errors
   if (err instanceof ZodError) {
     const messages = err.issues.map((issue) => {
       const path = issue.path.length > 0 ? `${issue.path.join(".")}: ` : "";
@@ -46,7 +44,7 @@ export function globalErrorHandler(
     return;
   }
 
-  // ─── Prisma Known Request Errors ─────────────────────
+  // Prisma Known Request Errors
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     const prismaMessage = formatPrismaError(err);
 
@@ -58,7 +56,7 @@ export function globalErrorHandler(
     return;
   }
 
-  // ─── Prisma Validation Errors ────────────────────────
+  // Prisma Validation Errors
   if (err instanceof Prisma.PrismaClientValidationError) {
     res.status(400).json({
       success: false,
@@ -68,7 +66,7 @@ export function globalErrorHandler(
     return;
   }
 
-  // ─── Application Errors (AuthError, RecordError, etc.) ─
+  // Application Errors (AuthError, RecordError, etc.)
   if (err.statusCode) {
     res.status(err.statusCode).json({
       success: false,
@@ -78,7 +76,7 @@ export function globalErrorHandler(
     return;
   }
 
-  // ─── Fallback: Unexpected Errors ─────────────────────
+  // Fallback: Unexpected Errors
   // Log the full stack trace server-side for debugging
   console.error("[GlobalErrorHandler] Unhandled error:", err);
 
@@ -93,7 +91,7 @@ export function globalErrorHandler(
   });
 }
 
-// ─── Prisma Error Formatter ────────────────────────────
+// Prisma Error Formatter
 
 function formatPrismaError(err: Prisma.PrismaClientKnownRequestError): {
   message: string;
