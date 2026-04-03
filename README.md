@@ -344,18 +344,18 @@ All responses follow a standardized envelope:
 
 Money is relational. Transactions belong to users, amounts need exact precision, aggregations must be deterministic. Picking a document store for this would be fighting the data model.
 
-- `Decimal(15,2)` at the column level — no floating-point drift, ever. JS `Number` is IEEE 754; it *will* round your sums wrong.
-- `Role`, `UserStatus`, `RecordType` are Postgres-native enums. The DB rejects bad state before your code even runs.
-- FK constraints + `ON DELETE CASCADE` = no orphaned records. Mongo can't structurally guarantee this.
-- ACID on every write. Partial inserts don't exist here.
+ `Decimal(15,2)` at the column level — no floating-point drift, ever. JS `Number` is IEEE 754; it *will* round your sums wrong.
+ `Role`, `UserStatus`, `RecordType` are Postgres-native enums. The DB rejects bad state before your code even runs.
+ FK constraints + `ON DELETE CASCADE` = no orphaned records. Mongo can't structurally guarantee this.
+ ACID on every write. Partial inserts don't exist here.
 
 ### DB-Level Aggregations
 
 All dashboard math (`SUM`, `GROUP BY`) runs inside Postgres, not in Node.js.
 
-- Postgres has a query planner, indexes, and parallel workers built for this. Pulling 10k rows into V8 to `reduce()` them is slow and memory-wasteful.
-- Decimal arithmetic stays in the DB — amounts never touch JS `Number`, so rounding errors are structurally eliminated.
-- This scales with data volume without adding load to the single-threaded event loop.
+ Postgres has a query planner, indexes, and parallel workers built for this. Pulling 10k rows into V8 to `reduce()` them is slow and memory-wasteful.
+ Decimal arithmetic stays in the DB — amounts never touch JS `Number`, so rounding errors are structurally eliminated.
+ This scales with data volume without adding load to the single-threaded event loop.
 
 ### Redis Cache-Aside
 
